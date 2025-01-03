@@ -51,12 +51,15 @@
                             const card = document.createElement('div');
                             card.className = 'effect-card';
                             
+                            const message = encodeURIComponent(`Triggering effect: ${effect.name}`);
+                            const tipUrl = `https://streamelements.com/dreadedzombie/tip?amount=${effect.amount}&message=${message}`;
+                            
                             card.innerHTML = `
                                 <div class="effect-name">${effect.name}</div>
                                 <div class="effect-description">${effect.description}</div>
                                 <div class="effect-amount">$${effect.amount.toFixed(2)}</div>
                                 <div class="effect-games">Games: ${effect.games.join(', ')}</div>
-                                <button class="tip-button" onclick="window.open('https://streamelements.com/dreadedzombie/tip?amount=${effect.amount}')">
+                                <button class="tip-button" onclick="window.open('${tipUrl}')">
                                     Tip $${effect.amount.toFixed(2)}
                                 </button>
                             `;
