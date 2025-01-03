@@ -165,9 +165,9 @@
                 return;
             }
 
-            // StreamElements only accepts amount and message parameters
+            // StreamElements parameters to select preset amount
             const params = new URLSearchParams({
-                amount: currentEffect.amount.toFixed(2),
+                preset: currentEffect.amount.toFixed(2),
                 message: document.getElementById('tipMessage').value,
                 type: 'tip',
                 name: currentEffect.name
