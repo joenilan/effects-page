@@ -17,24 +17,107 @@
         .effect-games { color: #888; font-size: 0.9em; }
         .tip-button { background-color: #9147ff; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 1.1em; margin-top: 15px; }
         .tip-button:hover { background-color: #7d2df9; }
-        .copy-amount { background: none; border: none; color: #0f0; cursor: pointer; padding: 0; margin: 0; font-size: 1.5em; }
-        .copy-amount:hover { text-decoration: underline; }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+        }
+        .overlay-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .close-overlay {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1001;
+            background: none;
+            border: none;
+            padding: 5px 10px;
+        }
+        .close-overlay:hover {
+            color: #9147ff;
+        }
+        .tip-frame {
+            flex: 1;
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Stream Effects</h1>
         <div class="instructions">
-            Click an effect to open the tip page. Make sure to enter the exact amount shown to trigger the effect!
+            Click an effect to open the tip page. The amount will be automatically filled in!
         </div>
         <div class="effects-grid" id="effectsList">
             <!-- Effects will be loaded here -->
         </div>
     </div>
 
+    <div id="tipOverlay" class="overlay">
+        <div class="overlay-content">
+            <button class="close-overlay" onclick="closeOverlay()">×</button>
+            <iframe id="tipFrame" class="tip-frame"></iframe>
+        </div>
+    </div>
+
     <script>
-        function copyAmount(amount) {
-            navigator.clipboard.writeText(amount.toFixed(2));
+        function openTipOverlay(amount, effectName) {
+            const overlay = document.getElementById('tipOverlay');
+            const frame = document.getElementById('tipFrame');
+            frame.src = `https://streamelements.com/dreadedzombie/tip`;
+            overlay.style.display = 'block';
+
+            // Wait for iframe to load, then try to fill in the fields
+            frame.onload = function() {
+                try {
+                    const frameDoc = frame.contentDocument || frame.contentWindow.document;
+                    
+                    // Wait a bit for any JavaScript to initialize
+                    setTimeout(() => {
+                        // Try to find and click the "Other" amount option
+                        const otherButton = frameDoc.querySelector('button[data-amount="other"]');
+                        if (otherButton) otherButton.click();
+
+                        // Try to find and fill the amount input
+                        const amountInput = frameDoc.querySelector('input[type="number"]');
+                        if (amountInput) {
+                            amountInput.value = amount.toFixed(2);
+                            amountInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+
+                        // Try to find and fill the message input
+                        const messageInput = frameDoc.querySelector('textarea');
+                        if (messageInput) {
+                            messageInput.value = `Triggering effect: ${effectName}`;
+                            messageInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    }, 1000);
+                } catch (error) {
+                    console.error('Error interacting with tip page:', error);
+                }
+            };
+        }
+
+        function closeOverlay() {
+            const overlay = document.getElementById('tipOverlay');
+            const frame = document.getElementById('tipFrame');
+            frame.src = 'about:blank';
+            overlay.style.display = 'none';
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -64,13 +147,9 @@
                             card.innerHTML = `
                                 <div class="effect-name">${effect.name}</div>
                                 <div class="effect-description">${effect.description}</div>
-                                <div class="effect-amount">
-                                    <button class="copy-amount" onclick="copyAmount(${effect.amount})" title="Click to copy amount">
-                                        $${effect.amount.toFixed(2)}
-                                    </button>
-                                </div>
+                                <div class="effect-amount">$${effect.amount.toFixed(2)}</div>
                                 <div class="effect-games">Games: ${effect.games.join(', ')}</div>
-                                <button class="tip-button" onclick="window.open('https://streamelements.com/dreadedzombie/tip')">
+                                <button class="tip-button" onclick="openTipOverlay(${effect.amount}, '${effect.name}')">
                                     Tip Now
                                 </button>
                             `;
