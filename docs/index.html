@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stream Effects</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #fff; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { text-align: center; color: #9147ff; margin-bottom: 30px; }
+        .effects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .effect-card { background-color: #2d2d2d; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .effect-name { font-size: 1.2em; font-weight: bold; color: #9147ff; margin-bottom: 10px; }
+        .effect-description { color: #ccc; margin-bottom: 15px; }
+        .effect-amount { font-size: 1.5em; color: #0f0; margin-bottom: 15px; }
+        .effect-games { color: #888; font-size: 0.9em; }
+        .tip-button { background-color: #9147ff; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 1.1em; margin-top: 15px; }
+        .tip-button:hover { background-color: #7d2df9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stream Effects</h1>
+        <div class="effects-grid" id="effectsList">
+            <!-- Effects will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const encodedData = urlParams.get('data');
+        
+        if (encodedData) {
+            try {
+                const jsonData = atob(encodedData);
+                const effects = JSON.parse(jsonData);
+                const effectsList = document.getElementById('effectsList');
+                
+                if (Object.keys(effects).length === 0) {
+                    document.body.innerHTML = '<h1>No effects available</h1>';
+                } else {
+                    Object.entries(effects).forEach(([id, effect]) => {
+                        const card = document.createElement('div');
+                        card.className = 'effect-card';
+                        
+                        card.innerHTML = `
+                            <div class="effect-name">${effect.name}</div>
+                            <div class="effect-description">${effect.description}</div>
+                            <div class="effect-amount">$${effect.amount.toFixed(2)}</div>
+                            <div class="effect-games">Games: ${effect.games.join(', ')}</div>
+                            <button class="tip-button" onclick="window.open('https://streamelements.com/joenilan/tip?amount=${effect.amount}')">
+                                Tip $${effect.amount.toFixed(2)}
+                            </button>
+                        `;
+                        
+                        effectsList.appendChild(card);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading effects:', error);
+                document.body.innerHTML = '<h1>Error loading effects</h1>';
+            }
+        } else {
+            document.body.innerHTML = '<h1>No effects data provided</h1>';
+        }
+    </script>
+</body>
+</html>
