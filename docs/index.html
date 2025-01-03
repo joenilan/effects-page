@@ -17,70 +17,34 @@
         .effect-games { color: #888; font-size: 0.9em; }
         .tip-button { background-color: #9147ff; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 1.1em; margin-top: 15px; }
         .tip-button:hover { background-color: #7d2df9; }
-        .copy-amount { background: none; border: none; color: #0f0; cursor: pointer; padding: 0; margin: 0; font-size: 1.5em; }
-        .copy-amount:hover { text-decoration: underline; }
-        .popup-instructions {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #2d2d2d;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            z-index: 1000;
-            text-align: center;
-        }
-        .popup-instructions.show {
-            display: block;
-        }
-        .popup-instructions kbd {
-            background: #1a1a1a;
-            padding: 2px 6px;
-            border-radius: 4px;
-            border: 1px solid #666;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Stream Effects</h1>
         <div class="instructions">
-            Click an effect to open the tip page. The amount will be copied to your clipboard!
+            Click an effect to open the tip page with the amount pre-filled!
         </div>
         <div class="effects-grid" id="effectsList">
             <!-- Effects will be loaded here -->
         </div>
     </div>
 
-    <div id="popupInstructions" class="popup-instructions">
-        <p>Amount copied to clipboard!</p>
-        <p>Press <kbd>Ctrl</kbd>+<kbd>V</kbd> or <kbd>⌘</kbd>+<kbd>V</kbd> to paste it in the "Other" amount field.</p>
-        <p>Opening tip page...</p>
-    </div>
-
     <script>
         function openTipPage(amount, effectName) {
-            // Copy amount to clipboard
-            navigator.clipboard.writeText(amount.toFixed(2)).then(() => {
-                // Show instructions popup
-                const instructions = document.getElementById('popupInstructions');
-                instructions.classList.add('show');
-                
-                // Open tip page after a short delay
-                setTimeout(() => {
-                    window.open('https://streamelements.com/dreadedzombie/tip', '_blank');
-                    
-                    // Hide instructions after another delay
-                    setTimeout(() => {
-                        instructions.classList.remove('show');
-                    }, 2000);
-                }, 1500);
-            }).catch(err => {
-                // If clipboard fails, just open the tip page
-                window.open('https://streamelements.com/dreadedzombie/tip', '_blank');
+            // Try different parameter combinations that StreamElements might support
+            const params = new URLSearchParams({
+                amount: amount.toFixed(2),
+                type: 'tip',
+                method: 'other',
+                message: `Triggering effect: ${effectName}`,
+                name: effectName,
+                custom_amount: amount.toFixed(2),
+                tipAmount: amount.toFixed(2),
+                defaultAmount: amount.toFixed(2)
             });
+            
+            window.open(`https://streamelements.com/dreadedzombie/tip?${params.toString()}`, '_blank');
         }
 
         document.addEventListener('DOMContentLoaded', function() {
