@@ -1,0 +1,76 @@
+:root {
+    --twitch-purple: #9146FF;
+    --twitch-dark: #18181B;
+    --twitch-light: #EFEFF1;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--twitch-dark);
+    color: var(--twitch-light);
+    margin: 0;
+    padding: 16px;
+}
+
+#app {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    color: var(--twitch-purple);
+    margin-bottom: 24px;
+}
+
+.effect-card {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.effect-info {
+    flex: 1;
+}
+
+.effect-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.effect-description {
+    color: #ADADB8;
+    margin-bottom: 8px;
+}
+
+.effect-amount {
+    font-weight: bold;
+    color: var(--twitch-purple);
+}
+
+.tip-button {
+    background-color: var(--twitch-purple);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.tip-button:hover {
+    background-color: #772CE8;
+}
+
+.effect-game {
+    color: #ADADB8;
+    font-size: 0.9em;
+    margin-top: 4px;
+    font-style: italic;
+} 

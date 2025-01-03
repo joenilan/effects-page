@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stream Effects</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <h1>Stream Effects</h1>
+      <div id="effects-list">
+        <!-- Effects will be loaded here dynamically -->
+      </div>
+    </div>
+    <script src="app.js"></script>
+    <script>
+      // Get the JWT from the URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const jwt = urlParams.get('jwt');
+      if (jwt) {
+        initialize(jwt);
+      } else {
+        console.error('No JWT provided');
+      }
+    </script>
+  </body>
+</html>
