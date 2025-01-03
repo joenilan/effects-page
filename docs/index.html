@@ -17,34 +17,162 @@
         .effect-games { color: #888; font-size: 0.9em; }
         .tip-button { background-color: #9147ff; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 1.1em; margin-top: 15px; }
         .tip-button:hover { background-color: #7d2df9; }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+        }
+        .tip-form {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #2d2d2d;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #9147ff;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 1em;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #9147ff;
+            outline: none;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .close-button:hover {
+            color: #9147ff;
+        }
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .payment-method {
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .payment-method.selected {
+            border-color: #9147ff;
+            background: #3d2d4d;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Stream Effects</h1>
         <div class="instructions">
-            Click an effect to open the tip page with the amount pre-filled!
+            Click an effect to open the tip form!
         </div>
         <div class="effects-grid" id="effectsList">
             <!-- Effects will be loaded here -->
         </div>
     </div>
 
+    <div id="tipOverlay" class="overlay">
+        <div class="tip-form">
+            <button class="close-button" onclick="closeTipForm()">×</button>
+            <h2 style="margin-top: 0; color: #9147ff;">Send Tip</h2>
+            <div class="form-group">
+                <label>Amount</label>
+                <input type="number" id="tipAmount" step="0.01" readonly>
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <textarea id="tipMessage" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Payment Method</label>
+                <div class="payment-methods">
+                    <div class="payment-method" onclick="selectPayment('paypal')">PayPal</div>
+                    <div class="payment-method" onclick="selectPayment('card')">Credit Card</div>
+                </div>
+            </div>
+            <button class="tip-button" onclick="submitTip()">Send Tip</button>
+        </div>
+    </div>
+
     <script>
-        function openTipPage(amount, effectName) {
-            // Try different parameter combinations that StreamElements might support
-            const params = new URLSearchParams({
-                amount: amount.toFixed(2),
-                type: 'tip',
-                method: 'other',
-                message: `Triggering effect: ${effectName}`,
-                name: effectName,
-                custom_amount: amount.toFixed(2),
-                tipAmount: amount.toFixed(2),
-                defaultAmount: amount.toFixed(2)
+        let selectedPayment = null;
+        let currentEffect = null;
+
+        function selectPayment(method) {
+            selectedPayment = method;
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
             });
-            
-            window.open(`https://streamelements.com/dreadedzombie/tip?${params.toString()}`, '_blank');
+            event.target.classList.add('selected');
+        }
+
+        function openTipForm(amount, effectName) {
+            currentEffect = { amount, name: effectName };
+            document.getElementById('tipAmount').value = amount.toFixed(2);
+            document.getElementById('tipMessage').value = `Triggering effect: ${effectName}`;
+            document.getElementById('tipOverlay').style.display = 'block';
+        }
+
+        function closeTipForm() {
+            document.getElementById('tipOverlay').style.display = 'none';
+            selectedPayment = null;
+            currentEffect = null;
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+        }
+
+        async function submitTip() {
+            if (!selectedPayment) {
+                alert('Please select a payment method');
+                return;
+            }
+
+            if (!currentEffect) {
+                alert('Something went wrong. Please try again.');
+                return;
+            }
+
+            // For now, redirect to StreamElements with our parameters
+            const params = new URLSearchParams({
+                amount: currentEffect.amount.toFixed(2),
+                message: document.getElementById('tipMessage').value,
+                payment: selectedPayment
+            });
+
+            window.location.href = `https://streamelements.com/dreadedzombie/tip?${params.toString()}`;
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -76,7 +204,7 @@
                                 <div class="effect-description">${effect.description}</div>
                                 <div class="effect-amount">$${effect.amount.toFixed(2)}</div>
                                 <div class="effect-games">Games: ${effect.games.join(', ')}</div>
-                                <button class="tip-button" onclick="openTipPage(${effect.amount}, '${effect.name}')">
+                                <button class="tip-button" onclick="openTipForm(${effect.amount}, '${effect.name}')">
                                     Tip Now
                                 </button>
                             `;
