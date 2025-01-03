@@ -38,27 +38,6 @@
             width: 90%;
             max-width: 500px;
         }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #9147ff;
-        }
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #444;
-            border-radius: 4px;
-            background: #1a1a1a;
-            color: #fff;
-            font-size: 1em;
-        }
-        .form-group input:focus, .form-group textarea:focus {
-            border-color: #9147ff;
-            outline: none;
-        }
         .close-button {
             position: absolute;
             top: 10px;
@@ -72,23 +51,22 @@
         .close-button:hover {
             color: #9147ff;
         }
-        .payment-methods {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
+        .instructions-text {
+            color: #ccc;
+            margin-bottom: 15px;
+            line-height: 1.6;
         }
-        .payment-method {
+        .highlight {
+            color: #0f0;
+            font-weight: bold;
+        }
+        .message {
+            color: #9147ff;
+            word-break: break-all;
             background: #1a1a1a;
-            border: 1px solid #444;
+            padding: 8px;
             border-radius: 4px;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-        }
-        .payment-method.selected {
-            border-color: #9147ff;
-            background: #3d2d4d;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -96,7 +74,7 @@
     <div class="container">
         <h1>Stream Effects</h1>
         <div class="instructions">
-            Click an effect to open the tip form!
+            Click an effect to see instructions!
         </div>
         <div class="effects-grid" id="effectsList">
             <!-- Effects will be loaded here -->
@@ -107,30 +85,19 @@
         <div class="tip-form">
             <button class="close-button" onclick="closeTipForm()">×</button>
             <h2 style="margin-top: 0; color: #9147ff;">Send Tip</h2>
-            <div class="form-group">
-                <label>Instructions</label>
-                <div style="color: #ccc; margin-bottom: 15px;">
-                    1. Click "Send Tip" below to open StreamElements<br>
-                    2. Select "Other" amount<br>
-                    3. Enter this amount: <span style="color: #0f0; font-weight: bold;" id="tipAmountDisplay"></span><br>
-                    4. Copy this message: <span style="color: #9147ff; word-break: break-all;" id="tipMessageDisplay"></span>
-                </div>
+            <div class="instructions-text">
+                1. Click "Open Tip Page" below<br>
+                2. Select "Other" amount<br>
+                3. Enter this amount: <span class="highlight" id="tipAmountDisplay"></span><br>
+                4. Copy this message:<br>
+                <div class="message" id="tipMessageDisplay"></div>
             </div>
-            <button class="tip-button" onclick="submitTip()">Send Tip</button>
+            <button class="tip-button" onclick="submitTip()">Open Tip Page</button>
         </div>
     </div>
 
     <script>
-        let selectedPayment = null;
         let currentEffect = null;
-
-        function selectPayment(method) {
-            selectedPayment = method;
-            document.querySelectorAll('.payment-method').forEach(el => {
-                el.classList.remove('selected');
-            });
-            event.target.classList.add('selected');
-        }
 
         function openTipForm(amount, effectName) {
             currentEffect = { amount, name: effectName };
@@ -142,19 +109,14 @@
 
         function closeTipForm() {
             document.getElementById('tipOverlay').style.display = 'none';
-            selectedPayment = null;
             currentEffect = null;
-            document.querySelectorAll('.payment-method').forEach(el => {
-                el.classList.remove('selected');
-            });
         }
 
-        async function submitTip() {
+        function submitTip() {
             if (!currentEffect) {
                 alert('Something went wrong. Please try again.');
                 return;
             }
-
             window.open(`https://streamelements.com/dreadedzombie/tip`, '_blank');
         }
 
