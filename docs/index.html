@@ -8,25 +8,35 @@
         body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: #fff; margin: 0; padding: 20px; }
         .container { max-width: 800px; margin: 0 auto; }
         h1 { text-align: center; color: #9147ff; margin-bottom: 30px; }
+        .instructions { text-align: center; color: #ccc; margin-bottom: 30px; }
         .effects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .effect-card { background-color: #2d2d2d; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .effect-name { font-size: 1.2em; font-weight: bold; color: #9147ff; margin-bottom: 10px; }
         .effect-description { color: #ccc; margin-bottom: 15px; }
-        .effect-amount { font-size: 1.5em; color: #0f0; margin-bottom: 15px; }
+        .effect-amount { font-size: 1.5em; color: #0f0; margin-bottom: 15px; font-weight: bold; }
         .effect-games { color: #888; font-size: 0.9em; }
         .tip-button { background-color: #9147ff; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 1.1em; margin-top: 15px; }
         .tip-button:hover { background-color: #7d2df9; }
+        .copy-amount { background: none; border: none; color: #0f0; cursor: pointer; padding: 0; margin: 0; font-size: 1.5em; }
+        .copy-amount:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Stream Effects</h1>
+        <div class="instructions">
+            Click an effect to open the tip page. Make sure to enter the exact amount shown to trigger the effect!
+        </div>
         <div class="effects-grid" id="effectsList">
             <!-- Effects will be loaded here -->
         </div>
     </div>
 
     <script>
+        function copyAmount(amount) {
+            navigator.clipboard.writeText(amount.toFixed(2));
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Script starting...');
             const urlParams = new URLSearchParams(window.location.search);
@@ -51,16 +61,17 @@
                             const card = document.createElement('div');
                             card.className = 'effect-card';
                             
-                            const message = encodeURIComponent(`Triggering effect: ${effect.name}`);
-                            const tipUrl = `https://streamelements.com/dreadedzombie/tip?amount=${effect.amount}&message=${message}`;
-                            
                             card.innerHTML = `
                                 <div class="effect-name">${effect.name}</div>
                                 <div class="effect-description">${effect.description}</div>
-                                <div class="effect-amount">$${effect.amount.toFixed(2)}</div>
+                                <div class="effect-amount">
+                                    <button class="copy-amount" onclick="copyAmount(${effect.amount})" title="Click to copy amount">
+                                        $${effect.amount.toFixed(2)}
+                                    </button>
+                                </div>
                                 <div class="effect-games">Games: ${effect.games.join(', ')}</div>
-                                <button class="tip-button" onclick="window.open('${tipUrl}')">
-                                    Tip $${effect.amount.toFixed(2)}
+                                <button class="tip-button" onclick="window.open('https://streamelements.com/dreadedzombie/tip')">
+                                    Tip Now
                                 </button>
                             `;
                             
