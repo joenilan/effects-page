@@ -108,18 +108,12 @@
             <button class="close-button" onclick="closeTipForm()">×</button>
             <h2 style="margin-top: 0; color: #9147ff;">Send Tip</h2>
             <div class="form-group">
-                <label>Amount</label>
-                <input type="number" id="tipAmount" step="0.01" readonly>
-            </div>
-            <div class="form-group">
-                <label>Message</label>
-                <textarea id="tipMessage" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                <label>Payment Method</label>
-                <div class="payment-methods">
-                    <div class="payment-method" onclick="selectPayment('paypal')">PayPal</div>
-                    <div class="payment-method" onclick="selectPayment('card')">Credit Card</div>
+                <label>Instructions</label>
+                <div style="color: #ccc; margin-bottom: 15px;">
+                    1. Click "Send Tip" below to open StreamElements<br>
+                    2. Select "Other" amount<br>
+                    3. Enter this amount: <span style="color: #0f0; font-weight: bold;" id="tipAmountDisplay"></span><br>
+                    4. Copy this message: <span style="color: #9147ff; word-break: break-all;" id="tipMessageDisplay"></span>
                 </div>
             </div>
             <button class="tip-button" onclick="submitTip()">Send Tip</button>
@@ -140,8 +134,9 @@
 
         function openTipForm(amount, effectName) {
             currentEffect = { amount, name: effectName };
-            document.getElementById('tipAmount').value = amount.toFixed(2);
-            document.getElementById('tipMessage').value = `Triggering effect: ${effectName}`;
+            document.getElementById('tipAmountDisplay').textContent = `$${amount.toFixed(2)}`;
+            const message = `Triggering effect: ${effectName}`;
+            document.getElementById('tipMessageDisplay').textContent = message;
             document.getElementById('tipOverlay').style.display = 'block';
         }
 
@@ -155,25 +150,12 @@
         }
 
         async function submitTip() {
-            if (!selectedPayment) {
-                alert('Please select a payment method');
-                return;
-            }
-
             if (!currentEffect) {
                 alert('Something went wrong. Please try again.');
                 return;
             }
 
-            // StreamElements parameters to select preset amount
-            const params = new URLSearchParams({
-                preset: currentEffect.amount.toFixed(2),
-                message: document.getElementById('tipMessage').value,
-                type: 'tip',
-                name: currentEffect.name
-            });
-
-            window.open(`https://streamelements.com/dreadedzombie/tip?${params.toString()}`, '_blank');
+            window.open(`https://streamelements.com/dreadedzombie/tip`, '_blank');
         }
 
         document.addEventListener('DOMContentLoaded', function() {
