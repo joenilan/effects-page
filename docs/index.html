@@ -165,14 +165,15 @@
                 return;
             }
 
-            // For now, redirect to StreamElements with our parameters
+            // StreamElements only accepts amount and message parameters
             const params = new URLSearchParams({
                 amount: currentEffect.amount.toFixed(2),
                 message: document.getElementById('tipMessage').value,
-                payment: selectedPayment
+                type: 'tip',
+                name: currentEffect.name
             });
 
-            window.location.href = `https://streamelements.com/dreadedzombie/tip?${params.toString()}`;
+            window.open(`https://streamelements.com/dreadedzombie/tip?${params.toString()}`, '_blank');
         }
 
         document.addEventListener('DOMContentLoaded', function() {
