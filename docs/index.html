@@ -27,50 +27,52 @@
     </div>
 
     <script>
-        console.log('Script starting...');
-        const urlParams = new URLSearchParams(window.location.search);
-        const encodedData = urlParams.get('data');
-        console.log('Encoded data:', encodedData);
-        
-        if (encodedData) {
-            try {
-                const jsonData = atob(encodedData);
-                console.log('Decoded JSON:', jsonData);
-                const effects = JSON.parse(jsonData);
-                console.log('Parsed effects:', effects);
-                const effectsList = document.getElementById('effectsList');
-                
-                if (Object.keys(effects).length === 0) {
-                    console.log('No effects found');
-                    document.body.innerHTML = '<h1>No effects available</h1>';
-                } else {
-                    console.log('Found effects, creating cards...');
-                    Object.entries(effects).forEach(([id, effect]) => {
-                        console.log('Creating card for effect:', effect.name);
-                        const card = document.createElement('div');
-                        card.className = 'effect-card';
-                        
-                        card.innerHTML = `
-                            <div class="effect-name">${effect.name}</div>
-                            <div class="effect-description">${effect.description}</div>
-                            <div class="effect-amount">$${effect.amount.toFixed(2)}</div>
-                            <div class="effect-games">Games: ${effect.games.join(', ')}</div>
-                            <button class="tip-button" onclick="window.open('https://streamelements.com/joenilan/tip?amount=${effect.amount}')">
-                                Tip $${effect.amount.toFixed(2)}
-                            </button>
-                        `;
-                        
-                        effectsList.appendChild(card);
-                    });
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Script starting...');
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedData = urlParams.get('data');
+            console.log('Encoded data:', encodedData);
+            
+            if (encodedData) {
+                try {
+                    const jsonData = atob(encodedData);
+                    console.log('Decoded JSON:', jsonData);
+                    const effects = JSON.parse(jsonData);
+                    console.log('Parsed effects:', effects);
+                    const effectsList = document.getElementById('effectsList');
+                    
+                    if (Object.keys(effects).length === 0) {
+                        console.log('No effects found');
+                        document.body.innerHTML = '<h1>No effects available</h1>';
+                    } else {
+                        console.log('Found effects, creating cards...');
+                        Object.entries(effects).forEach(([id, effect]) => {
+                            console.log('Creating card for effect:', effect.name);
+                            const card = document.createElement('div');
+                            card.className = 'effect-card';
+                            
+                            card.innerHTML = `
+                                <div class="effect-name">${effect.name}</div>
+                                <div class="effect-description">${effect.description}</div>
+                                <div class="effect-amount">$${effect.amount.toFixed(2)}</div>
+                                <div class="effect-games">Games: ${effect.games.join(', ')}</div>
+                                <button class="tip-button" onclick="window.open('https://streamelements.com/joenilan/tip?amount=${effect.amount}')">
+                                    Tip $${effect.amount.toFixed(2)}
+                                </button>
+                            `;
+                            
+                            effectsList.appendChild(card);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error processing effects:', error);
+                    document.body.innerHTML = '<h1>Error loading effects</h1>';
                 }
-            } catch (error) {
-                console.error('Error processing effects:', error);
-                document.body.innerHTML = '<h1>Error loading effects</h1>';
+            } else {
+                console.log('No data parameter found in URL');
+                document.body.innerHTML = '<h1>No effects data provided</h1>';
             }
-        } else {
-            console.log('No data parameter found in URL');
-            document.body.innerHTML = '<h1>No effects data provided</h1>';
-        }
+        });
     </script>
 </body>
 </html>
