@@ -102,7 +102,7 @@
         function openTipForm(amount, effectName) {
             currentEffect = { amount, name: effectName };
             document.getElementById('tipAmountDisplay').textContent = `$${amount.toFixed(2)}`;
-            const message = `Triggering effect: ${effectName}`;
+            const message = `!${effectName.toLowerCase().replace(/\s+/g, '')}`;
             document.getElementById('tipMessageDisplay').textContent = message;
             document.getElementById('tipOverlay').style.display = 'block';
         }
